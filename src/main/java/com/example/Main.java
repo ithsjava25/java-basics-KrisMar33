@@ -66,20 +66,15 @@ public class Main {
 
 
         LocalDate idag = LocalDate.now();
-        LocalDate imorgon = idag.plusDays(1);
-
 
         ElpriserAPI api = new ElpriserAPI();
         List<ElpriserAPI.Elpris> dagensPriser = api.getPriser(valtDatum, ElpriserAPI.Prisklass.valueOf(zone));
-        List<ElpriserAPI.Elpris> morgonDagensPriser = api.getPriser(valtDatum, ElpriserAPI.Prisklass.valueOf(zone));
-
 
         // handleNoDataAvailable()
         if (dagensPriser.isEmpty()) {
             System.out.println("Inga priser tillgängliga för " + valtDatum + " i " + zone);
             return;
         }
-
 
     }
     //showHelp_withHelpflag()
