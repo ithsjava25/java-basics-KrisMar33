@@ -81,10 +81,6 @@ public class Main {
         }
 
 
-
-
-
-
     }
     //showHelp_withHelpflag()
     public static void showHelp() {
@@ -92,7 +88,7 @@ public class Main {
                 Electricity Price Optimizer CLI
                 ------------------------------
                 Usage:
-                --zone SE1|SE2|SE3|SE4    (required)  Specify electricity zone
+                --zone SE1|SE2|SE3|SE4    (required) Specify electricity zone
                 --date YYYY-MM-DD         (optional) Defaults to today
                 --sorted                  (optional) Display prices in ascending order
                 --charging 2h|4h|8h       (optional) Find optimal charging windows
