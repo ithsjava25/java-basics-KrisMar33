@@ -94,7 +94,6 @@ public class Main {
         }
     }
 
-
     public static void bubbleSortDescending(List<ElpriserAPI.Elpris> priser) {
         int n = priser.size();
         for (int i = 0; i < n - 1; i++) {
