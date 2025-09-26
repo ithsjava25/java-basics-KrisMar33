@@ -92,7 +92,17 @@ public class Main {
             String period = String.format("%02d-%02d", p.timeStart().getHour(), p.timeEnd().getHour());
             System.out.println(period + " " + formatOre(p.sekPerKWh()) + " öre");
         }
+
+        //printMinMaxPrices_WithValidData()
+        //printMeanPrice_WithValidData()
+        double minpris = minPrice(dagensPriser);
+        double maxpris = maxPrice(dagensPriser);
+        double medelpris = meanPrice(dagensPriser);
+        System.out.println("Lägsta pris: " + formatOre(minpris) + " öre");
+        System.out.println("Högsta pris: " + formatOre(maxpris) + " öre");
+        System.out.println("Medelpris: " + formatOre(medelpris) + " öre");
     }
+
 
     public static void bubbleSortDescending(List<ElpriserAPI.Elpris> priser) {
         int n = priser.size();
@@ -129,13 +139,7 @@ public class Main {
     }
 
     private static boolean isValidZone(String zone) {
-        String[] validZones = {"SE1", "SE2", "SE3", "SE4"};
-        for (int i = 0; i < validZones.length; i++) {
-            if (validZones[i].equals(zone)) {
-                return true;
-            }
-        }
-        return false;
+        return "SE1".equals(zone) || "SE2".equals(zone) || "SE3".equals(zone) || "SE4".equals(zone);
     }
 
 
@@ -144,5 +148,40 @@ public class Main {
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(new Locale("sv", "SE"));
         DecimalFormat df = new DecimalFormat("0.00", symbols);
         return df.format(ore);
+    }
+
+
+    public static double minPrice(List<ElpriserAPI.Elpris> priser) {
+        if (priser.isEmpty()) return 0.0;
+
+        double min = priser.get(0).sekPerKWh();
+        for (ElpriserAPI.Elpris p : priser) {
+            if (p.sekPerKWh() < min) {
+                min = p.sekPerKWh();
+            }
+        }
+        return min;
+    }
+
+    public static double maxPrice(List<ElpriserAPI.Elpris> priser) {
+        if (priser.isEmpty()) return 0.0;
+
+        double max = priser.get(0).sekPerKWh();
+        for (ElpriserAPI.Elpris p : priser) {
+            if (p.sekPerKWh() > max) {
+                max = p.sekPerKWh();
+            }
+        }
+        return max;
+    }
+
+    public static double meanPrice(List<ElpriserAPI.Elpris> priser) {
+        if (priser.isEmpty()) return 0.0;
+
+        double sum = 0.0;
+        for (ElpriserAPI.Elpris p : priser) {
+            sum += p.sekPerKWh();
+        }
+        return sum / priser.size();
     }
 }
