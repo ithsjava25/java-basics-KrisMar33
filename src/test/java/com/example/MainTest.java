@@ -442,7 +442,7 @@ class MainTest {
     }
 
     private String formatOre(double sekPerKWh) {
-        double ore = sekPerKWh * 100.0;
+        double ore = sekPerKWh * 100;
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(new Locale("sv", "SE"));
         DecimalFormat df = new DecimalFormat("0.00", symbols);
         return df.format(ore);
