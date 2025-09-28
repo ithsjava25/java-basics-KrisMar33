@@ -1,8 +1,6 @@
 package com.example;
-
 import com.example.api.ElpriserAPI;
 import com.example.utils.ConsoleHelp;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
@@ -16,11 +14,9 @@ public class ArgHandler {
     private String charging;
     private Boolean help = false;
 
-
     public ArgHandler(String[] args) {
         parseArgs(args);
     }
-
 
     private void parseArgs(String[] args) {
         for (int i = 0; i < args.length; i++) {
@@ -35,8 +31,6 @@ public class ArgHandler {
         }
     }
 
-
-    // Hjälp
     public boolean isHelp() {
         return help || noArguments();
     }
@@ -45,17 +39,12 @@ public class ArgHandler {
         return zone == null && date == null && !sorted && charging == null;
     }
 
-
-    // Zon
-    //handleMissingZoneArgument()  // Kolla null...
     public ElpriserAPI.Prisklass getZone() {
         if (zone == null) {
             ConsoleHelp.showHelp();
             System.out.println("Error: --zone is required");
             return null;
-        }
-
-        try {
+        } try {
             return ElpriserAPI.Prisklass.valueOf(zone);
         } catch (IllegalArgumentException e) {
             System.out.println("Ogiltig zon: " + zone);
@@ -63,8 +52,6 @@ public class ArgHandler {
         }
     }
 
-    //Datum
-    //useCurrentDateWhenNotSpecified()  // handleInvalidDate()
     public LocalDate getDate() {
         if (date == null) return LocalDate.now();
         try {
@@ -75,18 +62,17 @@ public class ArgHandler {
         }
     }
 
+    public boolean isSorted() { return sorted; }
 
-    public Boolean isSorted() {
-        return sorted;
+    public int getChargingHours() {
+        if (charging == null) return 0;
+        String antalTim = charging.replaceAll("\\D+", "");
+        if (antalTim.isEmpty()) {
+            System.out.println("Ogiltigt värde för --charging: " + charging);
+            return 0;
+        }
+        return Integer.parseInt(antalTim);
     }
 
-
-    public String getChargingHours() {
-        return charging;
-    }
-
-    // Nödvändig??
-    public boolean includeTomorrowPrices() {
-        return LocalTime.now().getHour() >= 13;
-    }
+    public boolean InkluderaMorgondagensPriser() { return LocalTime.now().getHour() >= 13; }
 }
