@@ -53,7 +53,7 @@ Example Usage Your Program Should Support:
 java -cp target/classes com.example.Main --zone SE3 --date 2025-09-04
 java -cp target/classes com.example.Main --zone SE1 --charging 4h
 java -cp target/classes com.example.Main --zone SE2 --date 2025-09-04 --sorted
-java -cp target/classes com.example.Main --help
+java -cp target/classes com.example.Main --zone SE3 --date 2025-09-04
 ```
 
 ## 3. Run

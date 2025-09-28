@@ -1,6 +1,6 @@
 package com.example.utils;
 
-public class ConsoleHelp {
+public class ConsoleHjalp {
 
     //showHelp_withHelpflag()
     public static void showHelp() {
