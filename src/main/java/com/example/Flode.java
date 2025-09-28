@@ -2,91 +2,70 @@ package com.example;
 
 import com.example.api.ElpriserAPI;
 import com.example.utils.ConsoleHelp;
-import com.example.utils.Utskrift;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 
 public class Flode {
 
-
-    String zone = null;
-    String date = null;
-    Boolean sorted = false;
-    String charging = null;
-    Boolean help = false;
-
-    public void run(String[] args) {
-        for (int i = 0; i < args.length; i++) {
-            switch (args[i]) {
-                case "--zone" -> zone = args[++i];
-                case "--date" -> date = args[++i];
-                case "--sorted" -> sorted = true;
-                case "--charging" -> charging = args[++i];
-                case "--help" -> help = true;
-                default -> System.out.println("Okända argument " + args[i]);
-            }
-        }
+    // ArgHandler sparar användarens argument och används internt i hela klassen
+    // private final = skyddad från externa ändringar och kan inte bytas ut efter skapande
+    private final ArgHandler argHandler;
 
 
-        //showhelp_whenNoArguments()
-        if (args.length == 0 || help) {
-            ConsoleHelp.showHelp();
-            return;
-        }
-
-        //handleMissingZoneArgument()
-        if (zone == null) {
-            System.out.println("Error, --zone is required.");
-            ConsoleHelp.showHelp();
-            return;
-        }
-
-        //handleInvalidZone()
-        if (!isValidZone(zone)) {
-            System.out.println("Ogiltig zon");
-            return;
-        }
-
-
-        //useCurrentDateWhenNotSpecified() //handleInvalidDate()
-        LocalDate valtDatum;
-        if (date == null) {
-            valtDatum = LocalDate.now();
-        } else {
-            try {
-                valtDatum = LocalDate.parse(date);
-            } catch (DateTimeParseException e) {
-                System.out.println("Ogiltigt datum");
-                return;
-            }
-        }
-
-        // För sorteringen
-        LocalDate argDatum = valtDatum;
-        LocalDate dagenEfter = argDatum.plusDays(1);
-
-        ElpriserAPI api = new ElpriserAPI();
-        List<ElpriserAPI.Elpris> dagensPriser = api.getPriser(valtDatum, ElpriserAPI.Prisklass.valueOf(zone));
-        List<ElpriserAPI.Elpris> morgondagensPriser = api.getPriser(dagenEfter, ElpriserAPI.Prisklass.valueOf(zone));
-        dagensPriser.addAll(morgondagensPriser);
-
-
-        // handleNoDataAvailable()
-        if (dagensPriser.isEmpty()) {
-            System.out.println("Inga priser tillgängliga för " + valtDatum + " i " + zone);
-            return;
-        }
-
-        Utskrift utskrift = new Utskrift();
-        utskrift.printPrisInfo(dagensPriser);
-
+    public Flode(String[] args) {
+        this.argHandler = new ArgHandler(args);
     }
 
-    private static boolean isValidZone(String zone) {
-        return "SE1".equals(zone) || "SE2".equals(zone) || "SE3".equals(zone) || "SE4".equals(zone);
+    /**
+     * Kör hela programmets flöde:
+     * 1. Kollar om användaren vill ha hjälp
+     * 2. Hämtar zon och datum
+     * 3. Hämtar priser via PrisService
+     * 4. Skriver ut priser via Utskrift
+     * 5. Beräknar billigaste laddtimmar om det anges
+     */
+    public void run() {
+
+        // Visa CLI-hjälp om användaren begär det eller inte skickar argument
+        if (argHandler.isHelp()) {
+            ConsoleHelp.showHelp();
+            return;
+        }
+
+        // Hämta elpriszon som enum
+        // Avsluta om zonen är ogiltig
+        ElpriserAPI.Prisklass enumPrisklass = argHandler.getZone();
+        if (enumPrisklass == null) return;
+        // enumPrisklass kan vara null om användaren inte skickade en giltig zon
+        // Om vi försöker använda den utan kontroll kan programmet krascha med NullPointerException
+        // Därför kollar vi först: if (enumPrisklass == null) return
+
+        // Spara zonens enum-namn som sträng (SE1, SE2, SE3, SE4)
+        String valdZon = enumPrisklass.name();
+
+        // Hämta datum, standard är idag
+        LocalDate angivetDatum = argHandler.getDate();
+        LocalDate dagenEfter = angivetDatum.plusDays(1);
+
+        // Hämta priser från API via PrisService
+        PrisService prisService = new PrisService();
+        List<ElpriserAPI.Elpris> priserAngivetDatum = prisService.hamtaPriser(angivetDatum, enumPrisklass);
+        List<ElpriserAPI.Elpris> morgondagensPriser = prisService.hamtaPriser(dagenEfter, enumPrisklass);
+        // Lägg till alla priser från morgondagen i listan för dagens priser
+        // Nu innehåller dagensPriser både dagens och morgondagens elpriser
+
+
+        if (argHandler.includeTomorrowPrices()) {
+            priserAngivetDatum.addAll(morgondagensPriser);
+        }
+
+        // Kontrollera att det finns priser, annars visa fel
+        prisService.ingaPriser(priserAngivetDatum, valdZon, angivetDatum);
+
+        // Skriv ut priser till konsolen
+        Utskrift utskrift = new Utskrift();
+        utskrift.printZon(enumPrisklass);
+        utskrift.printMinMaxMean(priserAngivetDatum);
     }
 }
-
-

@@ -1,6 +1,5 @@
-package com.example.utils;
+package com.example;
 
-import com.example.PrisBeraknare;
 import com.example.api.ElpriserAPI;
 
 import java.text.DecimalFormat;
@@ -10,24 +9,27 @@ import java.util.Locale;
 
 public class Utskrift {
 
-private final PrisBeraknare beraknare;
+    private final PrisBeraknare beraknare;
 
-public Utskrift() {
-    this.beraknare = new PrisBeraknare();
-}
+    public Utskrift() {
+        this.beraknare = new PrisBeraknare();
+    }
 
-    //printMinMaxPrices_WithValidData()
-    //printMeanPrice_WithValidData()
+    // Skriv ut enum-zonen som sträng
+    public void printZon(ElpriserAPI.Prisklass prisklass) {
+        System.out.println("Elpriszon: " + prisklass.name());
+    }
 
-    public void printPrisInfo(List<ElpriserAPI.Elpris> dagensPriser) {
-        double minpris = beraknare.minPrice(dagensPriser);
-        double maxpris = beraknare.maxPrice(dagensPriser);
-        double medelpris = beraknare.meanPrice(dagensPriser);
+    public void printMinMaxMean(List<ElpriserAPI.Elpris> priser) {
+        //printMinMaxPrices_WithValidData()
+        //printMeanPrice_WithValidData()
+        double minpris = beraknare.minPrice(priser);
+        double maxpris = beraknare.maxPrice(priser);
+        double medelpris = beraknare.meanPrice(priser);
         System.out.println("Lägsta pris: " + formatOre(minpris) + " öre");
         System.out.println("Högsta pris: " + formatOre(maxpris) + " öre");
         System.out.println("Medelpris: " + formatOre(medelpris) + " öre");
     }
-
 
     private String formatOre(double sekPerKWh) {
         double ore = sekPerKWh * 100.0;

@@ -1,11 +1,8 @@
 package com.example;
 
 import com.example.api.ElpriserAPI;
-
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.List;
-import java.util.Locale;
+
 
 public class PrisBeraknare {
 
