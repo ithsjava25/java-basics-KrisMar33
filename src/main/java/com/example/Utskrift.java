@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Locale;
 
 public class Utskrift {
-    private final PrisBeraknare beraknare;
+    private final Beraknare beraknare;
 
     public Utskrift() {
-        this.beraknare = new PrisBeraknare();
+        this.beraknare = new Beraknare();
     }
 
-    public PrisBeraknare getBeraknare() {
+    public Beraknare getBeraknare() {
         return this.beraknare;
     }
 

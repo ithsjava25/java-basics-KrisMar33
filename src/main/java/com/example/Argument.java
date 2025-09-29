@@ -5,7 +5,7 @@ import com.example.utils.ConsoleHjalp;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-public class ArgHanterare {
+public class Argument {
 
     // Sparar argument
     private String zone;
@@ -14,7 +14,7 @@ public class ArgHanterare {
     private boolean sorted = false;
     private boolean help = false;
 
-    public ArgHanterare(String[] args) {
+    public Argument(String[] args) {
         parseArgs(args);
     }
 

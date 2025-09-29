@@ -5,27 +5,29 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class Flode {
-    private final ArgHanterare argHanterare;
+    private final Argument argument;
 
     public Flode(String[] args) {
-        this.argHanterare = new ArgHanterare(args);
+        this.argument = new Argument(args);
     }
 
     public void run() {
-        if (argHanterare.isHelp()) {
+        if (argument.isHelp()) {
             ConsoleHjalp.showHelp();
             return;
         }
 
-        ElpriserAPI.Prisklass zonEnum = argHanterare.getZone();
+        ElpriserAPI.Prisklass zonEnum = argument.getZone();
         if (zonEnum == null) return;
 
         String valdZon = zonEnum.name();
 
-        LocalDate angivetDatum = argHanterare.getDate();
+        LocalDate angivetDatum = argument.getDate();
         LocalDate dagenEfter = angivetDatum.plusDays(1);
 
-        PrisService prisService = new PrisService();
+        ElpriserAPI api = new ElpriserAPI();
+        PrisService prisService = new PrisService(api);
+
         List<ElpriserAPI.Elpris> priserAngivetDatum = prisService.hamtaPriser(angivetDatum, zonEnum);
         List<ElpriserAPI.Elpris> priserImorgon = prisService.hamtaPriser(dagenEfter, zonEnum);
         priserAngivetDatum.addAll(priserImorgon);
@@ -35,9 +37,9 @@ public class Flode {
         Utskrift utskrift = new Utskrift();
         utskrift.printZon(zonEnum);
         utskrift.printMinMaxMean(priserAngivetDatum);
-        utskrift.printMeanTimPris(priserAngivetDatum, argHanterare.isSorted());
+        utskrift.printMeanTimPris(priserAngivetDatum, argument.isSorted());
 
-        int timmar = argHanterare.getChargingHours();
+        int timmar = argument.getChargingHours();
         if (timmar > 0) {
             List<ElpriserAPI.Elpris> fonster = utskrift.getBeraknare().billigasteIntervallet(priserAngivetDatum, timmar);
             utskrift.printFonster(fonster, timmar);

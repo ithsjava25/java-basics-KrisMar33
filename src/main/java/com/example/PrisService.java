@@ -6,8 +6,8 @@ import java.util.List;
 public class PrisService {
 private final ElpriserAPI api;
 
-public PrisService() {
-    this.api = new ElpriserAPI();
+public PrisService(ElpriserAPI api) {
+    this.api = api;
 }
     public List<ElpriserAPI.Elpris> hamtaPriser(LocalDate datum, ElpriserAPI.Prisklass prisklass) {
         return api.getPriser(datum, prisklass);

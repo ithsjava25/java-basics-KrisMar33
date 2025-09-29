@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class PrisBeraknare {
+public class Beraknare {
 
     public double minPrice(List<ElpriserAPI.Elpris> priser) {
         if (priser.isEmpty()) return 0.0;
